@@ -1,0 +1,721 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Deakin University - Redesigned</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        /* Custom scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #2C2C2C; /* Dark track */
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #58bcaf; /* Teal thumb */
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #4AA091; /* Darker Teal */
+        }
+
+        /* Page transition styles */
+        .page {
+            display: none;
+        }
+        .page.active {
+            display: block;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .page-enter {
+            animation: fadeIn 0.5s ease-out forwards;
+        }
+
+        /* New Black & Teal Theme Palette */
+        :root {
+            --theme-primary-bg: #1A1A1A; /* Very dark grey for header/footer */
+            --theme-primary-bg-hover: #000000; /* Black for hover */
+            --theme-secondary-bg: #2C2C2C; /* Lighter dark grey for cards/sections */
+            --theme-accent: #58bcaf;      /* Teal accent */
+            --theme-accent-hover: #4AA091; /* Darker teal for hover */
+            --theme-text-primary: #E0E0E0;   /* Light grey for primary text */
+            --theme-text-secondary: #B0B0B0; /* Medium grey for secondary text */
+            --theme-text-on-accent: #FFFFFF; /* White text on teal elements */
+            --body-bg: #121212;            /* Darkest grey for body background */
+            --search-highlight-bg: #58bcaf40; /* Semi-transparent teal for search highlight */
+        }
+
+        /* Applying theme colors with Tailwind-friendly classes */
+        .bg-theme-primary { background-color: var(--theme-primary-bg); }
+        .hover\:bg-theme-primary-hover:hover { background-color: var(--theme-primary-bg-hover); }
+        .bg-theme-secondary { background-color: var(--theme-secondary-bg); }
+        .text-theme-accent { color: var(--theme-accent); }
+        .bg-theme-accent { background-color: var(--theme-accent); }
+        .hover\:bg-theme-accent-hover:hover { background-color: var(--theme-accent-hover); }
+        .border-theme-accent { border-color: var(--theme-accent); }
+        .text-theme-primary { color: var(--theme-text-primary); }
+        .text-theme-secondary { color: var(--theme-text-secondary); }
+        .text-theme-on-accent { color: var(--theme-text-on-accent); }
+
+        /* Active navigation link style */
+        nav a.active-link {
+            color: var(--theme-accent);
+            border-bottom: 2px solid var(--theme-accent);
+        }
+        nav a.active-link-mobile {
+            background-color: var(--theme-accent-hover); /* Darker teal for active mobile */
+            color: var(--theme-text-on-accent);
+        }
+        .hero-bg {
+            /* Using a darker placeholder that fits the theme better */
+            background-image: url('./images/39453_550x275.jpeg');
+            background-size: cover;
+            background-position: center;
+        }
+        .search-highlight {
+            background-color: var(--search-highlight-bg);
+            border-radius: 3px;
+            padding: 0 2px;
+        }
+        #search-message {
+            font-size: 0.875rem;
+            margin-top: 0.5rem;
+            transition: opacity 0.5s ease-out;
+        }
+    </style>
+</head>
+<body class="bg-body-bg font-sans antialiased text-theme-primary">
+
+    <header class="bg-theme-primary text-theme-primary shadow-md sticky top-0 z-50">
+        <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-20">
+                <div class="flex-shrink-0">
+                    <a href="#home" class="flex items-center nav-link">
+                        <img class="h-12 w-auto" src="./images/logo_deakin-rebrand-stacked.png" alt="Deakin University Logo" onerror="this.onerror=null;this.src='https://placehold.co/200x50/1A1A1A/58bcaf?text=Deakin+Logo&font=raleway';">
+  
+                    </a>
+                </div>
+
+                <nav class="hidden md:flex space-x-6">
+                    <a href="#home" class="nav-link px-3 py-2 rounded-md text-sm font-medium hover:bg-theme-primary-hover transition duration-150 ease-in-out active-link">Home</a>
+                    <a href="#programs" class="nav-link px-3 py-2 rounded-md text-sm font-medium hover:bg-theme-primary-hover transition duration-150 ease-in-out">Programs</a>
+                    <a href="#news" class="nav-link px-3 py-2 rounded-md text-sm font-medium hover:bg-theme-primary-hover transition duration-150 ease-in-out">News</a>
+                    <a href="#student-portal" class="nav-link px-3 py-2 rounded-md text-sm font-medium hover:bg-theme-primary-hover transition duration-150 ease-in-out">Student Portal</a>
+                    <a href="#staff-portal" class="nav-link px-3 py-2 rounded-md text-sm font-medium hover:bg-theme-primary-hover transition duration-150 ease-in-out">Staff Portal</a>
+                </nav>
+
+                <div class="hidden md:flex items-center relative">
+                    <input id="desktop-search-input" type="search" placeholder="Search..." class="px-3 py-2 rounded-l-md text-sm bg-theme-secondary text-theme-primary focus:outline-none focus:ring-2 focus:ring-theme-accent">
+                    <button id="desktop-search-button" class="bg-theme-accent hover:bg-theme-accent-hover text-theme-on-accent px-3 py-2 rounded-r-md text-sm font-medium">
+                        <i class="fas fa-search"></i>
+                    </button>
+                    <div id="desktop-search-message" class="absolute top-full left-0 w-full text-theme-accent"></div>
+                </div>
+
+                <div class="md:hidden">
+                    <button id="mobile-menu-button" class="text-theme-primary hover:text-theme-accent focus:outline-none">
+                        <i class="fas fa-bars text-2xl"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <div id="mobile-menu" class="md:hidden hidden bg-theme-primary">
+            <nav class="px-2 pt-2 pb-3 space-y-1 sm:px-3">
+                <a href="#home" class="mobile-nav-link block px-3 py-2 rounded-md text-base font-medium hover:bg-theme-primary-hover transition duration-150 ease-in-out active-link-mobile">Home</a>
+                <a href="#programs" class="mobile-nav-link block px-3 py-2 rounded-md text-base font-medium hover:bg-theme-primary-hover transition duration-150 ease-in-out">Programs</a>
+                <a href="#news" class="mobile-nav-link block px-3 py-2 rounded-md text-base font-medium hover:bg-theme-primary-hover transition duration-150 ease-in-out">News</a>
+                <a href="#student-portal" class="mobile-nav-link block px-3 py-2 rounded-md text-base font-medium hover:bg-theme-primary-hover transition duration-150 ease-in-out">Student Portal</a>
+                <a href="#staff-portal" class="mobile-nav-link block px-3 py-2 rounded-md text-base font-medium hover:bg-theme-primary-hover transition duration-150 ease-in-out">Staff Portal</a>
+                 <div class="px-3 pt-2 pb-3 relative">
+                    <input id="mobile-search-input" type="search" placeholder="Search..." class="w-full px-3 py-2 rounded-md text-sm bg-theme-secondary text-theme-primary focus:outline-none focus:ring-2 focus:ring-theme-accent">
+                    <button id="mobile-search-button" class="absolute right-3 top-1/2 transform -translate-y-1/2 mt-1 text-theme-accent hover:text-theme-accent-hover px-2 py-1">
+                         <i class="fas fa-search"></i>
+                    </button>
+                    <div id="mobile-search-message" class="text-theme-accent"></div>
+                </div>
+            </nav>
+        </div>
+    </header>
+
+    <main id="main-content" class="container mx-auto px-4 sm:px-6 lg:px-8 py-8">
+
+        <section id="home" class="page active">
+            <div class="hero-bg rounded-lg shadow-xl overflow-hidden mb-12">
+                <div class="bg-black bg-opacity-60 p-8 md:p-16 text-white"> <h1 class="text-4xl md:text-6xl font-bold mb-4 animate-fadeIn">Welcome to Deakin University</h1>
+                    <p class="text-lg md:text-xl mb-6 animate-fadeIn" style="animation-delay: 0.2s;">See The Wornderful Possible</p>
+                    <a href="#programs" class="nav-link bg-theme-accent text-theme-on-accent font-bold py-3 px-6 rounded-lg hover:bg-theme-accent-hover transition duration-300 transform hover:scale-105 inline-block animate-fadeIn" style="animation-delay: 0.4s;">Explore Programs</a>
+                </div>
+            </div>
+
+            <section class="mb-12 bg-theme-secondary p-8 rounded-lg shadow-lg">
+                <h2 class="text-3xl font-bold text-theme-accent mb-4">About Deakin</h2>
+                <p class="text-theme-text-secondary leading-relaxed">
+                    Deakin is driven by a spirit of curiosity and optimism, a place where ideas thrive, innovation flourishes and dreams take flight. As a socially caring university, we are unwavering in our commitment to excellence in education and research that drives lasting impact for our students and our communities. Together, we make the wonderful possible!
+                </p>
+            </section>
+
+            <section class="mb-12">
+                <h2 class="text-3xl font-bold text-theme-accent mb-6 text-center">Our Programs</h2>
+                <div class="grid md:grid-cols-3 gap-8">
+                    <div class="bg-theme-secondary p-6 rounded-lg shadow-lg hover:shadow-xl transition-shadow duration-300">
+                        <i class="fas fa-graduation-cap text-theme-accent text-4xl mb-4"></i>
+                        <h3 class="text-xl font-semibold text-theme-primary mb-2">Undergraduate Degrees</h3>
+                        <p class="text-theme-text-secondary text-sm">Explore a wide range of bachelor's degrees designed to equip you with the skills for a successful career.</p>
+                        <a href="#programs" class="nav-link text-theme-accent hover:text-theme-accent-hover mt-4 inline-block">Learn More &rarr;</a>
+                    </div>
+                    <div class="bg-theme-secondary p-6 rounded-lg shadow-lg hover:shadow-xl transition-shadow duration-300">
+                        <i class="fas fa-microscope text-theme-accent text-4xl mb-4"></i>
+                        <h3 class="text-xl font-semibold text-theme-primary mb-2">Graduate Programs</h3>
+                        <p class="text-theme-text-secondary text-sm">Advance your career or delve deeper into your field with our postgraduate and master's programs.</p>
+                        <a href="#programs" class="nav-link text-theme-accent hover:text-theme-accent-hover mt-4 inline-block">Learn More &rarr;</a>
+                    </div>
+                    <div class="bg-theme-secondary p-6 rounded-lg shadow-lg hover:shadow-xl transition-shadow duration-300">
+                        <i class="fas fa-flask text-theme-accent text-4xl mb-4"></i>
+                        <h3 class="text-xl font-semibold text-theme-primary mb-2">Research Degrees</h3>
+                        <p class="text-theme-text-secondary text-sm">Contribute to cutting-edge research and innovation with our PhD and research master's programs.</p>
+                        <a href="#programs" class="nav-link text-theme-accent hover:text-theme-accent-hover mt-4 inline-block">Learn More &rarr;</a>
+                    </div>
+                </div>
+            </section>
+
+            <section class="mb-12 bg-theme-secondary p-8 rounded-lg shadow-lg">
+                <h2 class="text-3xl font-bold text-theme-accent mb-6">Latest News</h2>
+                <div class="space-y-6">
+                    <div class="border-b border-gray-700 pb-4"> <h3 class="text-xl font-semibold text-theme-accent mb-1">Deakin Researchers Secure Prestigious Grant</h3>
+                        <p class="text-sm text-theme-text-secondary mb-2">May 12, 2025</p>
+                        <p class="text-theme-text-primary text-sm">A team of Deakin researchers has been awarded a significant grant to further their groundbreaking work in renewable energy...</p>
+                        <a href="#news" class="nav-link text-theme-accent hover:text-theme-accent-hover text-sm mt-2 inline-block">Read More &rarr;</a>
+                    </div>
+                    <div class="border-b border-gray-700 pb-4">
+                        <h3 class="text-xl font-semibold text-theme-accent mb-1">Annual Open Day Announced</h3>
+                        <p class="text-sm text-theme-text-secondary mb-2">May 10, 2025</p>
+                        <p class="text-theme-text-primary text-sm">Join us for our annual Open Day on August 5th! Explore our campuses, meet faculty, and discover what Deakin has to offer...</p>
+                        <a href="#news" class="nav-link text-theme-accent hover:text-theme-accent-hover text-sm mt-2 inline-block">Read More &rarr;</a>
+                    </div>
+                    <div>
+                        <h3 class="text-xl font-semibold text-theme-accent mb-1">Student Innovation Showcase Highlights</h3>
+                        <p class="text-sm text-theme-text-secondary mb-2">May 8, 2025</p>
+                        <p class="text-theme-text-primary text-sm">Our recent Student Innovation Showcase was a huge success, featuring incredible projects from across all faculties...</p>
+                        <a href="#news" class="nav-link text-theme-accent hover:text-theme-accent-hover text-sm mt-2 inline-block">Read More &rarr;</a>
+                    </div>
+                </div>
+                <div class="text-center mt-8">
+                     <a href="#news" class="nav-link bg-theme-accent text-theme-on-accent font-semibold py-3 px-6 rounded-lg hover:bg-theme-accent-hover transition duration-300">View All News</a>
+                </div>
+            </section>
+        </section>
+
+        <section id="programs" class="page bg-theme-secondary p-8 rounded-lg shadow-lg">
+            <h1 class="text-4xl font-bold text-theme-accent mb-6">Our Academic Programs</h1>
+            <p class="mb-4 text-theme-text-primary">Deakin University offers a diverse range of programs designed to meet the evolving needs of students and industries. Whether you're starting your academic journey, looking to advance your career, or pursuing groundbreaking research, we have a program for you.</p>
+
+            <div class="mb-8">
+                <h2 class="text-2xl font-semibold text-theme-accent mb-3">Undergraduate Programs</h2>
+                <p class="text-theme-text-secondary">Our undergraduate degrees provide a strong foundation in your chosen field, combining theoretical knowledge with practical experience. Explore areas such as:</p>
+                <ul class="list-disc list-inside text-theme-text-secondary mt-2 space-y-1">
+                    <li>Arts and Humanities</li>
+                    <li>Business and Law</li>
+                    <li>Engineering and IT</li>
+                    <li>Health Sciences</li>
+                    <li>Science and Environment</li>
+                </ul>
+                 <a href="#" class="mt-4 inline-block bg-theme-accent text-theme-on-accent py-2 px-4 rounded-md hover:bg-theme-accent-hover transition duration-150">Find an Undergraduate Course</a>
+            </div>
+
+            <div class="mb-8">
+                <h2 class="text-2xl font-semibold text-theme-accent mb-3">Graduate Programs</h2>
+                <p class="text-theme-text-secondary">Take your expertise to the next level with our postgraduate courses. We offer a variety of Master's degrees, graduate diplomas, and graduate certificates in specialized fields.</p>
+                 <a href="#" class="mt-4 inline-block bg-theme-accent text-theme-on-accent py-2 px-4 rounded-md hover:bg-theme-accent-hover transition duration-150">Explore Graduate Courses</a>
+            </div>
+
+            <div>
+                <h2 class="text-2xl font-semibold text-theme-accent mb-3">Research Programs</h2>
+                <p class="text-theme-text-secondary">Join a vibrant research community and contribute to impactful discoveries. Our PhD and research master's programs offer opportunities to work alongside leading academics.</p>
+                 <a href="#" class="mt-4 inline-block bg-theme-accent text-theme-on-accent py-2 px-4 rounded-md hover:bg-theme-accent-hover transition duration-150">Discover Research Opportunities</a>
+            </div>
+        </section>
+
+        <section id="news" class="page bg-theme-secondary p-8 rounded-lg shadow-lg">
+            <h1 class="text-4xl font-bold text-theme-accent mb-6">University News & Events</h1>
+            <div class="space-y-8">
+                <article class="flex flex-col md:flex-row items-start">
+                    <img src="https://placehold.co/300x200/58bcaf/1A1A1A?text=News+Image+1&font=raleway" alt="News Image 1" class="w-full md:w-1/3 rounded-lg shadow-md mb-4 md:mb-0 md:mr-6">
+                    <div class="flex-1">
+                        <h2 class="text-2xl font-semibold text-theme-accent mb-2">Major Breakthrough in AI Research by Deakin Team</h2>
+                        <p class="text-sm text-theme-text-secondary mb-2">Published on: May 13, 2025</p>
+                        <p class="text-theme-text-primary leading-relaxed">
+                            A dedicated team of researchers at Deakin University's School of Information Technology has announced a significant breakthrough in artificial intelligence, developing a new algorithm that enhances machine learning capabilities by over 30%. This innovation is set to revolutionize data processing and predictive analytics across various industries...
+                        </p>
+                        <a href="#" class="text-theme-accent hover:text-theme-accent-hover mt-3 inline-block font-semibold">Read Full Story &rarr;</a>
+                    </div>
+                </article>
+                <article class="flex flex-col md:flex-row items-start">
+                    <img src="https://placehold.co/300x200/2C2C2C/E0E0E0?text=Event+Image+1&font=raleway" alt="Event Image 1" class="w-full md:w-1/3 rounded-lg shadow-md mb-4 md:mb-0 md:mr-6">
+                    <div class="flex-1">
+                        <h2 class="text-2xl font-semibold text-theme-accent mb-2">Upcoming Event: Global Sustainability Summit 2025</h2>
+                        <p class="text-sm text-theme-text-secondary mb-2">Event Date: June 5-7, 2025</p>
+                        <p class="text-theme-text-primary leading-relaxed">
+                            Deakin University is proud to host the Global Sustainability Summit 2025. This three-day event will bring together leading experts, policymakers, and innovators from around the world to discuss pressing environmental challenges and collaborative solutions. Register now to be part of this critical conversation...
+                        </p>
+                        <a href="#" class="text-theme-accent hover:text-theme-accent-hover mt-3 inline-block font-semibold">Event Details & Registration &rarr;</a>
+                    </div>
+                </article>
+                 <article class="flex flex-col md:flex-row items-start">
+                    <img src="https://placehold.co/300x200/1A1A1A/FFFFFF?text=News+Image+2&font=raleway" alt="News Image 2" class="w-full md:w-1/3 rounded-lg shadow-md mb-4 md:mb-0 md:mr-6">
+                    <div class="flex-1">
+                        <h2 class="text-2xl font-semibold text-theme-accent mb-2">Deakin Launches New Scholarship Program for International Students</h2>
+                        <p class="text-sm text-theme-text-secondary mb-2">Published on: May 9, 2025</p>
+                        <p class="text-theme-text-primary leading-relaxed">
+                           In a move to further enhance global diversity and accessibility, Deakin University has launched a new comprehensive scholarship program aimed at supporting international students. The program offers various funding opportunities across all faculties...
+                        </p>
+                        <a href="#" class="text-theme-accent hover:text-theme-accent-hover mt-3 inline-block font-semibold">Learn More &rarr;</a>
+                    </div>
+                </article>
+            </div>
+        </section>
+
+        <section id="student-portal" class="page">
+             <div class="max-w-md mx-auto bg-theme-secondary p-8 rounded-lg shadow-xl mt-10">
+                <div class="text-center mb-8">
+                    <img class="h-16 w-auto mx-auto mb-4" src="./images/logo_deakin-rebrand-stacked.png" alt="Deakin University Logo" onerror="this.onerror=null;this.src='https://placehold.co/150x40/1A1A1A/58bcaf?text=Deakin+Logo&font=raleway';">
+                    <h1 class="text-3xl font-bold text-theme-accent">Student Portal</h1>
+                </div>
+                <form id="student-login-form">
+                    <div class="mb-4">
+                        <label for="student-id" class="block text-sm font-medium text-theme-text-secondary">Student ID</label>
+                        <input type="text" id="student-id" name="student-id" class="mt-1 block w-full px-3 py-2 border border-gray-600 rounded-md shadow-sm bg-theme-primary text-theme-primary focus:outline-none focus:ring-theme-accent focus:border-theme-accent sm:text-sm" placeholder="Enter your student ID">
+                    </div>
+                    <div class="mb-6">
+                        <label for="student-password" class="block text-sm font-medium text-theme-text-secondary">Password</label>
+                        <input type="password" id="student-password" name="student-password" class="mt-1 block w-full px-3 py-2 border border-gray-600 rounded-md shadow-sm bg-theme-primary text-theme-primary focus:outline-none focus:ring-theme-accent focus:border-theme-accent sm:text-sm" placeholder="Enter your password">
+                    </div>
+                    <button type="submit" class="w-full bg-theme-accent text-theme-on-accent py-2 px-4 rounded-md hover:bg-theme-accent-hover focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-theme-secondary focus:ring-theme-accent transition duration-150">
+                        Login
+                    </button>
+                    <p class="text-xs text-center text-theme-text-secondary mt-4">Forgot password? <a href="#" class="text-theme-accent hover:underline">Reset here</a>.</p>
+                </form>
+            </div>
+
+            <div id="student-dashboard" class="hidden mt-10 bg-theme-secondary p-8 rounded-lg shadow-xl">
+                <h2 class="text-2xl font-bold text-theme-accent mb-6">Welcome, [Student Name]!</h2>
+                <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    <a href="#" class="block p-6 bg-theme-primary text-theme-primary rounded-lg shadow hover:bg-theme-primary-hover transition duration-150">
+                        <i class="fas fa-book text-3xl mb-2 text-theme-accent"></i>
+                        <h3 class="text-xl font-semibold">My Courses</h3>
+                        <p class="text-sm text-theme-text-secondary">Access your course materials and timetable.</p>
+                    </a>
+                    <a href="#" class="block p-6 bg-theme-primary text-theme-primary rounded-lg shadow hover:bg-theme-primary-hover transition duration-150">
+                        <i class="fas fa-graduation-cap text-3xl mb-2 text-theme-accent"></i>
+                        <h3 class="text-xl font-semibold">Academic Records</h3>
+                        <p class="text-sm text-theme-text-secondary">View your grades and academic progress.</p>
+                    </a>
+                    <a href="#" class="block p-6 bg-theme-primary text-theme-primary rounded-lg shadow hover:bg-theme-primary-hover transition duration-150">
+                        <i class="fas fa-envelope text-3xl mb-2 text-theme-accent"></i>
+                        <h3 class="text-xl font-semibold">University Mail</h3>
+                        <p class="text-sm text-theme-text-secondary">Check your student email.</p>
+                    </a>
+                    <a href="#" class="block p-6 bg-theme-primary text-theme-primary rounded-lg shadow hover:bg-theme-primary-hover transition duration-150">
+                        <i class="fas fa-calendar-alt text-3xl mb-2 text-theme-accent"></i>
+                        <h3 class="text-xl font-semibold">Events & Workshops</h3>
+                        <p class="text-sm text-theme-text-secondary">Find upcoming university events.</p>
+                    </a>
+                    <a href="#" class="block p-6 bg-theme-primary text-theme-primary rounded-lg shadow hover:bg-theme-primary-hover transition duration-150">
+                        <i class="fas fa-users text-3xl mb-2 text-theme-accent"></i>
+                        <h3 class="text-xl font-semibold">Student Services</h3>
+                        <p class="text-sm text-theme-text-secondary">Access support and resources.</p>
+                    </a>
+                     <a href="#" id="student-logout" class="block p-6 bg-red-700 text-white rounded-lg shadow hover:bg-red-800 transition duration-150 text-center"> <i class="fas fa-sign-out-alt text-3xl mb-2"></i>
+                        <h3 class="text-xl font-semibold">Logout</h3>
+                    </a>
+                </div>
+            </div>
+        </section>
+
+        <section id="staff-portal" class="page">
+            <div class="max-w-md mx-auto bg-theme-secondary p-8 rounded-lg shadow-xl mt-10">
+                 <div class="text-center mb-8">
+                    <img class="h-16 w-auto mx-auto mb-4" src="./images/logo_deakin-rebrand-stacked.png" alt="Deakin University Logo" onerror="this.onerror=null;this.src='https://placehold.co/150x40/1A1A1A/58bcaf?text=Deakin+Logo&font=raleway';">
+                    <h1 class="text-3xl font-bold text-theme-accent">Staff Portal</h1>
+                </div>
+                <form id="staff-login-form">
+                    <div class="mb-4">
+                        <label for="staff-id" class="block text-sm font-medium text-theme-text-secondary">Staff ID / Email</label>
+                        <input type="text" id="staff-id" name="staff-id" class="mt-1 block w-full px-3 py-2 border border-gray-600 rounded-md shadow-sm bg-theme-primary text-theme-primary focus:outline-none focus:ring-theme-accent focus:border-theme-accent sm:text-sm" placeholder="Enter your staff ID or email">
+                    </div>
+                    <div class="mb-6">
+                        <label for="staff-password" class="block text-sm font-medium text-theme-text-secondary">Password</label>
+                        <input type="password" id="staff-password" name="staff-password" class="mt-1 block w-full px-3 py-2 border border-gray-600 rounded-md shadow-sm bg-theme-primary text-theme-primary focus:outline-none focus:ring-theme-accent focus:border-theme-accent sm:text-sm" placeholder="Enter your password">
+                    </div>
+                    <button type="submit" class="w-full bg-theme-accent text-theme-on-accent py-2 px-4 rounded-md hover:bg-theme-accent-hover focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-theme-secondary focus:ring-theme-accent transition duration-150">
+                        Login
+                    </button>
+                     <p class="text-xs text-center text-theme-text-secondary mt-4">Having trouble logging in? <a href="#" class="text-theme-accent hover:underline">Contact IT Support</a>.</p>
+                </form>
+            </div>
+
+             <div id="staff-dashboard" class="hidden mt-10 bg-theme-secondary p-8 rounded-lg shadow-xl">
+                <h2 class="text-2xl font-bold text-theme-accent mb-6">Welcome, [Staff Name]!</h2>
+                <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    <a href="#" class="block p-6 bg-theme-primary text-theme-primary rounded-lg shadow hover:bg-theme-primary-hover transition duration-150">
+                        <i class="fas fa-users-cog text-3xl mb-2 text-theme-accent"></i>
+                        <h3 class="text-xl font-semibold">HR Information</h3>
+                        <p class="text-sm text-theme-text-secondary">Access HR policies, leave requests, and more.</p>
+                    </a>
+                    <a href="#" class="block p-6 bg-theme-primary text-theme-primary rounded-lg shadow hover:bg-theme-primary-hover transition duration-150">
+                        <i class="fas fa-file-invoice-dollar text-3xl mb-2 text-theme-accent"></i>
+                        <h3 class="text-xl font-semibold">Payroll</h3>
+                        <p class="text-sm text-theme-text-secondary">View payslips and payment information.</p>
+                    </a>
+                    <a href="#" class="block p-6 bg-theme-primary text-theme-primary rounded-lg shadow hover:bg-theme-primary-hover transition duration-150">
+                        <i class="fas fa-chalkboard-teacher text-3xl mb-2 text-theme-accent"></i>
+                        <h3 class="text-xl font-semibold">Teaching Resources</h3>
+                        <p class="text-sm text-theme-text-secondary">Access tools and materials for teaching.</p>
+                    </a>
+                    <a href="#" class="block p-6 bg-theme-primary text-theme-primary rounded-lg shadow hover:bg-theme-primary-hover transition duration-150">
+                        <i class="fas fa-cogs text-3xl mb-2 text-theme-accent"></i>
+                        <h3 class="text-xl font-semibold">IT Support</h3>
+                        <p class="text-sm text-theme-text-secondary">Request IT assistance and resources.</p>
+                    </a>
+                     <a href="#" class="block p-6 bg-theme-primary text-theme-primary rounded-lg shadow hover:bg-theme-primary-hover transition duration-150">
+                        <i class="fas fa-folder-open text-3xl mb-2 text-theme-accent"></i>
+                        <h3 class="text-xl font-semibold">Document Hub</h3>
+                        <p class="text-sm text-theme-text-secondary">Access shared documents and files.</p>
+                    </a>
+                     <a href="#" id="staff-logout" class="block p-6 bg-red-700 text-white rounded-lg shadow hover:bg-red-800 transition duration-150 text-center"> <i class="fas fa-sign-out-alt text-3xl mb-2"></i>
+                        <h3 class="text-xl font-semibold">Logout</h3>
+                    </a>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <footer class="bg-theme-primary text-theme-text-secondary py-12 mt-12">
+        <div class="container mx-auto px-4 sm:px-6 lg:px-8 text-center">
+            <img class="h-12 w-auto mx-auto mb-4" src="./images/logo_deakin-rebrand-stacked.png" alt="Deakin University Logo - Footer" onerror="this.onerror=null;this.src='https://placehold.co/150x40/1A1A1A/58bcaf?text=Deakin+Logo&font=raleway';">
+            <p class="text-sm">&copy; <span id="current-year"></span> Deakin University. All rights reserved.</p>
+            <p class="text-xs mt-2">CRICOS Provider Code: 00113B</p>
+            <div class="mt-4 space-x-4">
+                <a href="#" class="hover:text-theme-accent">Privacy Policy</a>
+                <a href="#" class="hover:text-theme-accent">Terms of Use</a>
+                <a href="#" class="hover:text-theme-accent">Contact Us</a>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Mobile menu toggle
+        const mobileMenuButton = document.getElementById('mobile-menu-button');
+        const mobileMenu = document.getElementById('mobile-menu');
+        mobileMenuButton.addEventListener('click', () => {
+            mobileMenu.classList.toggle('hidden');
+            const isExpanded = mobileMenuButton.getAttribute('aria-expanded') === 'true' || false;
+            mobileMenuButton.setAttribute('aria-expanded', !isExpanded);
+            mobileMenuButton.querySelector('i').classList.toggle('fa-bars');
+            mobileMenuButton.querySelector('i').classList.toggle('fa-times');
+        });
+
+        // Page navigation
+        const navLinks = document.querySelectorAll('.nav-link');
+        const mobileNavLinks = document.querySelectorAll('.mobile-nav-link');
+        const pages = document.querySelectorAll('.page');
+        const mainContent = document.getElementById('main-content');
+        let currentHighlightTimeout = null; // To manage highlight clearing
+
+        function showPage(pageId, scrollTargetSelector = null) {
+            pages.forEach(page => {
+                if (page.id === pageId) {
+                    if (!page.classList.contains('active')) {
+                        page.classList.add('active', 'page-enter');
+                        setTimeout(() => page.classList.remove('page-enter'), 500);
+                    }
+                } else {
+                    page.classList.remove('active', 'page-enter');
+                }
+            });
+            if (scrollTargetSelector) {
+                const targetElement = document.querySelector(`#${pageId} ${scrollTargetSelector}`);
+                if (targetElement) {
+                    targetElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                } else {
+                    window.scrollTo(0, 0);
+                }
+            } else {
+                 window.scrollTo(0, 0); // Scroll to top on page change
+            }
+        }
+
+        function updateActiveLink(activeLink) {
+            navLinks.forEach(link => {
+                link.classList.remove('active-link');
+                if (link.getAttribute('href') === activeLink.getAttribute('href')) {
+                    link.classList.add('active-link');
+                }
+            });
+            mobileNavLinks.forEach(link => {
+                link.classList.remove('active-link-mobile');
+                 if (link.getAttribute('href') === activeLink.getAttribute('href')) {
+                    link.classList.add('active-link-mobile');
+                }
+            });
+        }
+
+        navLinks.forEach(link => {
+            link.addEventListener('click', (e) => {
+                e.preventDefault();
+                const pageId = link.getAttribute('href').substring(1);
+                showPage(pageId);
+                updateActiveLink(link);
+                history.pushState(null, null, `#${pageId}`);
+            });
+        });
+
+        mobileNavLinks.forEach(link => {
+            link.addEventListener('click', (e) => {
+                e.preventDefault();
+                const pageId = link.getAttribute('href').substring(1);
+                showPage(pageId);
+                updateActiveLink(link);
+                mobileMenu.classList.add('hidden');
+                mobileMenuButton.setAttribute('aria-expanded', 'false');
+                mobileMenuButton.querySelector('i').classList.remove('fa-times');
+                mobileMenuButton.querySelector('i').classList.add('fa-bars');
+                history.pushState(null, null, `#${pageId}`);
+            });
+        });
+        
+        function handleHashChange() {
+            const hash = window.location.hash;
+            if (hash) {
+                const pageId = hash.substring(1);
+                const targetPage = document.getElementById(pageId);
+                if (targetPage && targetPage.classList.contains('page')) {
+                    showPage(pageId);
+                    const activeNavLink = document.querySelector(`.nav-link[href="#${pageId}"]`);
+                    if (activeNavLink) updateActiveLink(activeNavLink);
+                    const activeMobileNavLink = document.querySelector(`.mobile-nav-link[href="#${pageId}"]`);
+                    if (activeMobileNavLink) updateActiveLink(activeMobileNavLink);
+                } else {
+                     showPage('home');
+                     const defaultActiveLink = document.querySelector('.nav-link[href="#home"]');
+                     if (defaultActiveLink) updateActiveLink(defaultActiveLink);
+                }
+            } else {
+                showPage('home');
+                const defaultActiveLink = document.querySelector('.nav-link[href="#home"]');
+                if (defaultActiveLink) updateActiveLink(defaultActiveLink);
+            }
+        }
+
+        window.addEventListener('hashchange', handleHashChange);
+        window.addEventListener('load', handleHashChange);
+
+        document.getElementById('current-year').textContent = new Date().getFullYear();
+
+        // Portal login/logout logic (no changes from previous, just theming applied via CSS)
+        const studentLoginForm = document.getElementById('student-login-form');
+        const studentDashboard = document.getElementById('student-dashboard');
+        const studentLogoutButton = document.getElementById('student-logout');
+        if (studentLoginForm) {
+            studentLoginForm.addEventListener('submit', (e) => {
+                e.preventDefault();
+                studentLoginForm.parentElement.style.display = 'none';
+                studentDashboard.style.display = 'block';
+                studentDashboard.classList.add('page-enter');
+                setTimeout(() => studentDashboard.classList.remove('page-enter'), 500);
+            });
+        }
+        if (studentLogoutButton) {
+            studentLogoutButton.addEventListener('click', (e) => {
+                e.preventDefault();
+                studentDashboard.style.display = 'none';
+                studentLoginForm.parentElement.style.display = 'block';
+                studentLoginForm.parentElement.classList.add('page-enter');
+                setTimeout(() => studentLoginForm.parentElement.classList.remove('page-enter'), 500);
+            });
+        }
+
+        const staffLoginForm = document.getElementById('staff-login-form');
+        const staffDashboard = document.getElementById('staff-dashboard');
+        const staffLogoutButton = document.getElementById('staff-logout');
+        if (staffLoginForm) {
+            staffLoginForm.addEventListener('submit', (e) => {
+                e.preventDefault();
+                staffLoginForm.parentElement.style.display = 'none';
+                staffDashboard.style.display = 'block';
+                staffDashboard.classList.add('page-enter');
+                setTimeout(() => staffDashboard.classList.remove('page-enter'), 500);
+            });
+        }
+        if (staffLogoutButton) {
+            staffLogoutButton.addEventListener('click', (e) => {
+                e.preventDefault();
+                staffDashboard.style.display = 'none';
+                staffLoginForm.parentElement.style.display = 'block';
+                staffLoginForm.parentElement.classList.add('page-enter');
+                setTimeout(() => staffLoginForm.parentElement.classList.remove('page-enter'), 500);
+            });
+        }
+
+        // Search Functionality
+        const desktopSearchInput = document.getElementById('desktop-search-input');
+        const desktopSearchButton = document.getElementById('desktop-search-button');
+        const desktopSearchMessage = document.getElementById('desktop-search-message');
+        const mobileSearchInput = document.getElementById('mobile-search-input');
+        const mobileSearchButton = document.getElementById('mobile-search-button');
+        const mobileSearchMessage = document.getElementById('mobile-search-message');
+        const searchablePages = ['home', 'programs', 'news']; // IDs of pages to search within
+
+        function displaySearchMessage(message, isError = false, targetElement) {
+            targetElement.textContent = message;
+            targetElement.style.color = isError ? 'red' : 'var(--theme-accent)';
+            targetElement.style.opacity = '1';
+            setTimeout(() => {
+                targetElement.style.opacity = '0';
+            }, 3000);
+        }
+        
+        function clearHighlights() {
+            document.querySelectorAll('.search-highlight').forEach(el => {
+                // Replace the span with its original text content
+                const parent = el.parentNode;
+                parent.replaceChild(document.createTextNode(el.textContent), el);
+                parent.normalize(); // Merges adjacent text nodes
+            });
+        }
+
+        function highlightText(node, query) {
+            if (currentHighlightTimeout) clearTimeout(currentHighlightTimeout);
+            clearHighlights();
+
+            let matchFound = false;
+            const walker = document.createTreeWalker(node, NodeFilter.SHOW_TEXT, null, false);
+            let textNode;
+            const regex = new RegExp(query.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'gi'); // Escape regex special chars
+            
+            const nodesToReplace = [];
+
+            while (textNode = walker.nextNode()) {
+                if (textNode.parentElement.closest('script,style,noscript')) continue; // Skip script/style tags
+                const text = textNode.nodeValue;
+                let match;
+                let lastIndex = 0;
+                const fragment = document.createDocumentFragment();
+
+                while ((match = regex.exec(text)) !== null) {
+                    matchFound = true;
+                    // Add text before match
+                    if (match.index > lastIndex) {
+                        fragment.appendChild(document.createTextNode(text.substring(lastIndex, match.index)));
+                    }
+                    // Add highlighted match
+                    const span = document.createElement('span');
+                    span.className = 'search-highlight';
+                    span.textContent = match[0];
+                    fragment.appendChild(span);
+                    lastIndex = regex.lastIndex;
+                }
+                // Add text after last match
+                if (lastIndex < text.length) {
+                    fragment.appendChild(document.createTextNode(text.substring(lastIndex)));
+                }
+                
+                if (fragment.childNodes.length > 0 && matchFound) { // Only replace if there were actual changes
+                    nodesToReplace.push({original: textNode, replacement: fragment});
+                }
+            }
+
+            nodesToReplace.forEach(item => {
+                item.original.parentNode.replaceChild(item.replacement, item.original);
+            });
+
+
+            if (matchFound) {
+                const firstHighlight = document.querySelector('.search-highlight');
+                if (firstHighlight) {
+                    firstHighlight.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    // Set a timeout to remove highlights after a few seconds
+                    currentHighlightTimeout = setTimeout(clearHighlights, 5000); // Clear after 5 seconds
+                }
+            }
+            return matchFound;
+        }
+
+
+        function performSearch(query, messageElement) {
+            clearHighlights(); // Clear previous highlights
+            if (!query || query.length < 2) {
+                displaySearchMessage('Please enter at least 2 characters.', true, messageElement);
+                return;
+            }
+
+            const lowerCaseQuery = query.toLowerCase();
+            let foundOnPage = null;
+            let foundOnCurrentPage = false;
+
+            const currentPageId = document.querySelector('.page.active')?.id;
+
+            for (const pageId of searchablePages) {
+                const pageElement = document.getElementById(pageId);
+                if (pageElement) {
+                    const pageText = pageElement.innerText.toLowerCase();
+                    if (pageText.includes(lowerCaseQuery)) {
+                        if (pageId === currentPageId) {
+                            foundOnCurrentPage = true;
+                            // Highlight on current page
+                            if(highlightText(pageElement, query)) {
+                                displaySearchMessage(`Found "${query}" on this page.`, false, messageElement);
+                            } else {
+                                displaySearchMessage(`"${query}" found, but couldn't highlight.`, false, messageElement);
+                            }
+                            return; // Stop if found and highlighted on current page
+                        } else if (!foundOnPage) {
+                            foundOnPage = pageId; // Store first page where found (if not current)
+                        }
+                    }
+                }
+            }
+
+            if (foundOnPage) {
+                displaySearchMessage(`Found "${query}" on the ${foundOnPage.charAt(0).toUpperCase() + foundOnPage.slice(1)} page. Navigating...`, false, messageElement);
+                const navLinkForPage = document.querySelector(`.nav-link[href="#${foundOnPage}"]`) || document.querySelector(`.mobile-nav-link[href="#${foundOnPage}"]`);
+                if (navLinkForPage) updateActiveLink(navLinkForPage);
+                showPage(foundOnPage);
+                // Attempt to highlight after navigation
+                setTimeout(() => {
+                    const newActivePageElement = document.getElementById(foundOnPage);
+                    if (newActivePageElement) highlightText(newActivePageElement, query);
+                }, 600); // Delay to allow page transition animation
+            } else if (!foundOnCurrentPage) {
+                displaySearchMessage(`No results found for "${query}".`, true, messageElement);
+            }
+        }
+
+        desktopSearchButton.addEventListener('click', () => {
+            performSearch(desktopSearchInput.value.trim(), desktopSearchMessage);
+        });
+        desktopSearchInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                performSearch(desktopSearchInput.value.trim(), desktopSearchMessage);
+            }
+        });
+
+        mobileSearchButton.addEventListener('click', () => {
+            performSearch(mobileSearchInput.value.trim(), mobileSearchMessage);
+        });
+         mobileSearchInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                 performSearch(mobileSearchInput.value.trim(), mobileSearchMessage);
+            }
+        });
+
+    </script>
+</body>
+</html>
